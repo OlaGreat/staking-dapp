@@ -21,6 +21,8 @@ export function useStaking() {
     args: address ? [address] : undefined,
     query: { enabled: !!address }
   })
+  
+  
 
   // Pending reward
   const { data: pendingRewards, refetch: refetchRewards } = useReadContract({
