@@ -264,6 +264,8 @@ export function useStaking() {
   const [apr, setApr] = useState('0')
   const [isTransacting, setIsTransacting] = useState(false)
   const [tokenBalance, setTokenBalance] = useState<bigint>(0n)
+  const [allowance, setAllowance] = useState<bigint>(1n)
+
 
   const { data: contractUserDetails } = useReadContract({
     abi: STAKING_ABI,
@@ -358,26 +360,49 @@ const approveTokens = async () => {
   }
 }
 
-const { data: tokenBalanceRaw, isLoading: isBalanceLoading } = useReadContract({
-  address: ERC20_CONTRACT_ADDRESS,
-  abi: erc20Abi,
-  functionName: 'balanceOf',
-  args: address ? [address] : undefined,
-  query: { enabled: !!address },
+  const { data: tokenBalanceRaw, isLoading: isBalanceLoading } = useReadContract({
+    address: ERC20_CONTRACT_ADDRESS,
+    abi: erc20Abi,
+    functionName: 'balanceOf',
+    args: address ? [address] : undefined,
+    query: { enabled: !!address },
 
-})
+  })
 
-useEffect(() => {
-  if (tokenBalanceRaw !== undefined) {
-    setTokenBalance(tokenBalanceRaw)
-  }
-}, [tokenBalanceRaw])
+  console.log("tokenbalance ======", tokenBalanceRaw)
+  useEffect(() => {
+    console.log("tokenbalance ====== 2222", tokenBalanceRaw)
+
+    if (tokenBalanceRaw !== undefined) {
+      setTokenBalance(tokenBalanceRaw)
+    }  
+  }, [tokenBalanceRaw])
+
+
+
+
+  const { data: contractAllowance } = useReadContract({
+    address: ERC20_CONTRACT_ADDRESS,
+    abi: erc20Abi,
+    functionName: 'allowance',
+    args: address ? [address, STAKING_CONTRACT_ADDRESS] : undefined,
+    query: { enabled: !!address },
+
+  })
+   useEffect(() => {
+    console.log("allowance ====== 2222", contractAllowance)
+
+    if (contractAllowance !== undefined) {
+      setAllowance(contractAllowance)
+    }
+  }, [contractAllowance])
+
 
 
 const checkBalanceAndAllowance = async (amount: string) => {
   const amountInWei = parseEther(amount)
 
-  if (tokenBalance < amountInWei) {
+  if (tokenBalanceRaw < amountInWei) {
     console.log("tokenbalance========", tokenBalance)
     toast({ title: "Insufficient token balance", variant: "destructive" })
     return false

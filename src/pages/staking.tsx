@@ -158,11 +158,13 @@ import { useStaking } from '../hooks/useStaking'
 import { ArrowUp, ArrowDown, Gift, AlertCircle } from 'lucide-react'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { parseEther, formatEther } from 'viem'
+import { useStakingEvents } from '@/hooks/events'
 
 
 export default function MinimalStaking3() {
   const [stakeAmount, setStakeAmount] = useState('')
   const { toast } = useToast()
+  useStakingEvents();
 
   const {
     userDetails,
