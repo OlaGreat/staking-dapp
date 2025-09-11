@@ -147,8 +147,6 @@ const approveTokens = async () => {
 
   })
    useEffect(() => {
-    console.log("allowance ====== 2222", contractAllowance)
-
     if (contractAllowance !== undefined) {
       setAllowance(contractAllowance)
     }
@@ -160,7 +158,6 @@ const checkBalanceAndAllowance = async (amount: string) => {
   const amountInWei = parseEther(amount)
 
   if (tokenBalanceRaw < amountInWei) {
-    console.log("tokenbalance========", tokenBalance)
     toast({ title: "Insufficient token balance", variant: "destructive" })
     return false
   }
@@ -169,7 +166,6 @@ const checkBalanceAndAllowance = async (amount: string) => {
 
   const stake = useCallback(async (amount: string) => {
   if (!(await checkBalanceAndAllowance(amount))) {
-        console.log("tokenbalance========", tokenBalance)
     toast({ title: 'Error', description: 'staking failed approve spend token' })
       return
     }

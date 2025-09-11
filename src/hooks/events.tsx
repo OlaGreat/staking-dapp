@@ -1,7 +1,8 @@
 
-import { parseAbiItem } from 'viem'
+import { formatEther, parseAbiItem } from 'viem'
 import { useEffect, useState } from 'react'
 import { useAccount, usePublicClient } from 'wagmi'
+import { log } from 'console'
 
 const STAKING_CONTRACT_ADDRESS = import.meta.env.VITE_STAKING_CONTRACT
 
@@ -14,7 +15,7 @@ export function useStakingEvents() {
 
   useEffect(() => {
     if (!address) return
-    let unwatchStake: any, unwatchWithdraw: any
+    let unwatchStake: any, unwatchWithdraw: any, unwatchEmergercyWithdraw: any
 
     try {
       unwatchStake = publicClient.watchEvent({
@@ -23,9 +24,8 @@ export function useStakingEvents() {
           'event Staked(address indexed user,uint256 amount,uint256 timestamp,uint256 newTotalStaked,uint256 currentRewardRate)'
         ),
         onLogs: (logs) => {
-            console.log("evnt ==========", logs)
           const filtered = logs.filter(log => log.args.user.toLowerCase() === address.toLowerCase())
-          if (filtered.length) setLastStake(filtered[filtered.length - 1])
+          if (filtered.length) setLastStake(formatEther(filtered[filtered.length - 1].args.newTotalStaked))
         },
 
       })
@@ -37,8 +37,18 @@ export function useStakingEvents() {
         ),
         onLogs: (logs) => {
           const filtered = logs.filter(log => log.args.user.toLowerCase() === address.toLowerCase())
-          console.log("log event=============", filtered)
-          if (filtered.length) setLastWithdraw(filtered[filtered.length - 1])
+          if (filtered.length) setLastStake(formatEther(filtered[filtered.length - 1].args.newTotalStaked))
+        },
+      })
+
+      unwatchEmergercyWithdraw = publicClient.watchEvent({
+        address: STAKING_CONTRACT_ADDRESS,
+        event: parseAbiItem(
+          'event EmergencyWithdrawn(address indexed user,uint256 amount,uint256 timestamp,uint256 newTotalStaked)'
+        ),
+        onLogs: (logs) => {
+          const filtered = logs.filter(log => log.args.user.toLowerCase() === address.toLowerCase())
+          if (filtered.length) setLastStake(formatEther(filtered[filtered.length - 1].args.newTotalStaked))
         },
       })
     } catch (err: any) {
@@ -48,13 +58,9 @@ export function useStakingEvents() {
     return () => {
       unwatchStake?.()
       unwatchWithdraw?.()
+      unwatchEmergercyWithdraw?.()
     }
   }, [address])
-
-    console.log("log stake event=============", lastStake)   
-    console.log("log withdraw event=============", lastWithdraw)
-
-
 
 
   return { lastStake, lastWithdraw, error }
