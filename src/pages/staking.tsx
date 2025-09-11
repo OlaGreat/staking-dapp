@@ -13,7 +13,7 @@ import { useStakingEvents } from '@/hooks/events'
 
 export default function MinimalStaking3() {
   const [stakeAmount, setStakeAmount] = useState('')
-  const { toast } = useToast()
+  // const { toast } = useToast()
   useStakingEvents();
 
   const {
@@ -29,6 +29,8 @@ export default function MinimalStaking3() {
     isConnected,
     approveTokens,
   } = useStaking()
+
+  
 
   const parsedUserDetails = {
     stakedAmount: userDetails && userDetails.stakedAmount !== undefined ? formatEther(userDetails.stakedAmount) : "0",

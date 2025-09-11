@@ -239,6 +239,8 @@ const checkBalanceAndAllowance = async (amount: string) => {
     }
   }, [writeContractAsync, toast])
 
+  
+
   return {
     userDetails,
     pendingRewards,
