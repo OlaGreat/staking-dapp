@@ -14,7 +14,7 @@ import { useStakingEvents } from '@/hooks/events'
 export default function MinimalStaking3() {
   const [stakeAmount, setStakeAmount] = useState('')
   // const { toast } = useToast()
-  const { lastStake } = useStakingEvents();
+  const { lastStake, claim } = useStakingEvents();
 
   const {
     userDetails,
@@ -87,7 +87,7 @@ export default function MinimalStaking3() {
               <div className="text-center space-y-1">
                 <p className="text-3xl font-bold">
                    {lastStake
-    ? safeNumber(lastStake) // show latest from event
+    ? safeNumber(lastStake) 
     : safeNumber(parsedUserDetails.stakedAmount)} 
 
                 </p>

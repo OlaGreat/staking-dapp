@@ -31,6 +31,8 @@ export function useStaking() {
     args: address ? [address] : undefined,
     watch: true,
   })
+  
+  
 
   const { data: contractPendingRewards } = useReadContract({
     abi: STAKING_ABI,
